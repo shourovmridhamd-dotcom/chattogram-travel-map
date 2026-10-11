@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chattogram Division Travel Tracker</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 10px;
+            text-align: center;
+            background-color: #f4f4f9;
+        }
+        h1 { color: #006652; }
+        #map {
+            height: 520px;
+            width: 100%;
+            max-width: 900px;
+            margin: 15px auto;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+        .controls { margin: 20px 0; }
+        button {
+            background-color: #1877f2;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover { background-color: #145dbf; }
+        .popup-img {
+            width: 100%;
+            max-width: 180px;
+            border-radius: 6px;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Chattogram Division Travel Map</h1>
+    <p>Bandarban, Rangamati, Khagrachhari, Cox's Bazar soho shob ghorar jaiga dekhun!</p>
+
+    <div id="map"></div>
+
+    <div class="controls">
+        <button onclick="shareOnFB()">Facebook-e Share Korun</button>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        const map = L.map('map').setView([22.1000, 92.1000], 7.5);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        const spots = [
+            { name: "Nilgiri (Bandarban)", lat: 21.9567, lng: 92.3411 },
+            { name: "Meghla Tourism (Bandarban)", lat: 22.1690, lng: 92.2150 },
+            { name: "Boga Lake (Bandarban)", lat: 21.9833, lng: 92.4167 },
+            { name: "Nilachal (Bandarban)", lat: 22.1764, lng: 92.2045 },
+            { name: "Keokradong (Bandarban)", lat: 21.9500, lng: 92.5167 },
+            { name: "Kaptai Lake (Rangamati)", lat: 22.4924, lng: 92.2231 },
+            { name: "Hanging Bridge (Rangamati)", lat: 22.6439, lng: 92.1972 },
+            { name: "Sajek Valley (Rangamati/Khagrachhari border)", lat: 23.3820, lng: 92.2938 },
+            { name: "Alutila Cave (Khagrachhari)", lat: 23.1079, lng: 91.9689 },
+            { name: "Richang Waterfall (Khagrachhari)", lat: 23.1256, lng: 91.9325 },
+            { name: "Cox's Bazar Sea Beach", lat: 21.4272, lng: 92.0058 },
+            { name: "Inani Beach (Cox's Bazar)", lat: 21.2294, lng: 92.0469 },
+            { name: "Saint Martin's Island", lat: 20.6275, lng: 92.3236 },
+            { name: "Patenga Sea Beach (Chattogram)", lat: 22.2323, lng: 91.7900 },
+            { name: "Foy's Lake (Chattogram)", lat: 22.3653, lng: 91.7967 },
+            { name: "Sitakunda Ecopark (Chattogram)", lat: 22.6171, lng: 91.6601 },
+            { name: "Guliakhali Beach (Sitakunda)", lat: 22.5833, lng: 91.5667 },
+            { name: "Bijoysingha Dighi (Feni)", lat: 23.0167, lng: 91.3950 },
+            { name: "Moynamoti (Cumilla)", lat: 23.4533, lng: 91.1417 },
+            { name: "Nijhum Dwip (Noakhali)", lat: 22.0667, lng: 91.0000 }
+        ];
+
+        spots.forEach(spot => {
+            const marker = L.marker([spot.lat, spot.lng]).addTo(map);
+            const cleanId = spot.name.replace(/[^a-zA-Z0-9]/g, '');
+            const popupContent = `
+                <div style="text-align:center;">
+                    <h3 style="margin:5px 0; color:#006652;">${spot.name}</h3>
+                    <p style="margin:5px 0; font-size:12px;">Apnar ghora chhobi upload korun:</p>
+                    <input type="file" accept="image/*" onchange="previewImage(event, 'img-${cleanId}')">
+                    <br>
+                    <img id="img-${cleanId}" class="popup-img" src="" style="display:none;" />
+                </div>
+            `;
+            marker.bindPopup(popupContent);
+        });
+
+        function previewImage(event, imgId) {
+            const reader = new FileReader();
+            reader.onload = function() {
+                const output = document.getElementById(imgId);
+                output.src = reader.result;
+                output.style.display = 'block';
+            };
+            if (event.target.files[0]) {
+                reader.readAsDataURL(event.target.files[0]);
+            }
+        }
+
+        function shareOnFB() {
+            const currentUrl = window.location.href;
+            const fbUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentUrl)}`;
+            window.open(fbUrl, '_blank', 'width=600,height=400');
+        }
+    </script>
+</body>
+</html>
